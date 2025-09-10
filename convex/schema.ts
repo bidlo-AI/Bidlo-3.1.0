@@ -9,4 +9,10 @@ export default defineSchema({
   numbers: defineTable({
     value: v.number(),
   }),
+  users: defineTable({
+    email: v.string(),
+    name: v.string(),
+    avatar: v.string(),
+    workosId: v.string(),
+  }),
 });
