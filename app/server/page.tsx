@@ -5,7 +5,7 @@ import { withAuth } from '@workos-inc/authkit-nextjs';
 
 export default async function ServerPage() {
   const { accessToken } = await withAuth();
-  const preloaded = await preloadQuery(api.getUser.getUser, {}, { token: accessToken });
+  const preloaded = await preloadQuery(api.users.getUser, {}, { token: accessToken });
 
   const data = preloadedQueryResult(preloaded);
 

@@ -22,7 +22,7 @@ export default function Home() {
 }
 
 const Content2 = () => {
-  const user = useQuery(api.getUser.getUser);
+  const user = useQuery(api.users.getUser, {});
   return <pre>{JSON.stringify(user, null, 2)}</pre>;
 };
 
