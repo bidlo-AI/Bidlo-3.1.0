@@ -1,5 +1,5 @@
 import { internal } from './_generated/api';
-import { action, internalQuery, query } from './_generated/server';
+import { internalQuery, query } from './_generated/server';
 import schema from './schema';
 import { crud } from 'convex-helpers/server/crud';
 
@@ -10,23 +10,9 @@ export const { create, destroy, update } = crud(schema, 'users');
 export const getUser: ReturnType<typeof query> = query({
   handler: async (ctx) => {
     const user = await ctx.auth.getUserIdentity();
-    console.log('getUser', user);
-
     const workos_user_id = user?.subject;
+
     if (!workos_user_id) throw new Error('User not authenticated');
-
-    return await ctx.runQuery(internal.users.getByWorkOSId, { workos_id: workos_user_id });
-  },
-});
-
-// Action variant of getUser for cases where an action is required.
-export const getUserAction: ReturnType<typeof action> = action({
-  handler: async (ctx) => {
-    const user = await ctx.auth.getUserIdentity();
-    console.log('getUserAction', user);
-    const workos_user_id = user?.subject;
-    if (!workos_user_id) throw new Error('User not authenticated');
-
     return await ctx.runQuery(internal.users.getByWorkOSId, { workos_id: workos_user_id });
   },
 });
