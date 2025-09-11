@@ -7,9 +7,5 @@ export default async function Home() {
   const { accessToken } = await withAuth();
   const preloaded = await preloadQuery(api.users.getUser, {}, { token: accessToken });
 
-  return (
-    <>
-      <UserInfo preloaded={preloaded} />
-    </>
-  );
+  return <UserInfo preloaded={preloaded} />;
 }

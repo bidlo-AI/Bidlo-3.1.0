@@ -1,18 +1,20 @@
 'use client';
 
 import { useEffect } from 'react';
-import { usePreloadedQuery, Preloaded } from 'convex/react';
+import { usePreloadedQuery, Preloaded, Authenticated } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useTheme } from 'next-themes';
 
-export const UISyncClient = ({
-  preloadedUser,
-  children,
-}: {
-  preloadedUser: Preloaded<typeof api.users.getUser>;
-  children: React.ReactNode;
-}) => {
-  const user = usePreloadedQuery(preloadedUser);
+export const UISyncClient = ({ preloaded }: { preloaded: Preloaded<typeof api.users.getUser> }) => {
+  return (
+    <Authenticated>
+      <Inner preloaded={preloaded} />
+    </Authenticated>
+  );
+};
+
+const Inner = ({ preloaded }: { preloaded: Preloaded<typeof api.users.getUser> }) => {
+  const user = usePreloadedQuery(preloaded);
   const { setTheme } = useTheme(); // Access setTheme via hook
 
   // - set theme
@@ -21,5 +23,5 @@ export const UISyncClient = ({
   }, [user?.theme, setTheme]);
   // - set color
 
-  return <>{children}</>;
+  return <></>;
 };
