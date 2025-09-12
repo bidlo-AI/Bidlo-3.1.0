@@ -1,6 +1,6 @@
 import { httpRouter } from 'convex/server';
 import { httpAction } from './_generated/server';
-import { internal } from './_generated/api';
+import { internal, api } from './_generated/api';
 
 const http = httpRouter();
 
@@ -242,6 +242,16 @@ http.route({
             // workos_user_id: data.user_id,
             expires_at: data.expires_at ? new Date(data.expires_at).getTime() : Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days default
           });
+          break;
+        }
+        case 'invitation.accepted': {
+          // Remove the invite once it's accepted
+          await ctx.runAction(api.organization_invites.removeInviteByWorkOSId, { workos_invite_id: data.id });
+          break;
+        }
+        case 'invitation.revoked': {
+          // Remove the invite if it was revoked
+          await ctx.runAction(api.organization_invites.removeInviteByWorkOSId, { workos_invite_id: data.id });
           break;
         }
         default: {
