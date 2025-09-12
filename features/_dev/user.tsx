@@ -1,19 +1,11 @@
 'use client';
 
-import { Authenticated, Preloaded, usePreloadedQuery } from 'convex/react';
+import { Preloaded, usePreloadedQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { useAuth } from '@workos-inc/authkit-nextjs/components';
 import type { User } from '@workos-inc/node';
 
-export default function UserInfo({ preloaded }: { preloaded: Preloaded<typeof api.users.getUser> }) {
-  return (
-    <Authenticated>
-      <InnerUserInfo preloaded={preloaded} />
-    </Authenticated>
-  );
-}
-
-export function InnerUserInfo({ preloaded }: { preloaded: Preloaded<typeof api.users.getUser> }) {
+export function UserInfo({ preloaded }: { preloaded: Preloaded<typeof api.users.getUser> }) {
   const user = usePreloadedQuery(preloaded);
   return (
     <>

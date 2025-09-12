@@ -1,7 +1,7 @@
 'use client';
 
 import { api } from '@/convex/_generated/api';
-import { Authenticated, Preloaded, usePreloadedQuery } from 'convex/react';
+import { Preloaded, usePreloadedQuery } from 'convex/react';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -12,20 +12,6 @@ import { OrgSelectPopoverContent } from './content';
 type OrganizationItem = { id: string; name: string; role: string };
 
 export const OrgSelectClient = ({
-  preloaded,
-  selectedOrg,
-}: {
-  preloaded: Preloaded<typeof api.organizations.getUserOrganizations>;
-  selectedOrg: string;
-}) => {
-  return (
-    <Authenticated>
-      <Inner preloaded={preloaded} selectedOrg={selectedOrg} />
-    </Authenticated>
-  );
-};
-
-export const Inner = ({
   preloaded,
   selectedOrg,
 }: {
