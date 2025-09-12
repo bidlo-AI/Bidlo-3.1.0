@@ -1,6 +1,6 @@
 import { Header } from '@/features/layout/components/header';
 import { HotkeysProvider } from '@/features/layout/providers/hotkeys';
-import { AgentLayout } from '@/features/agent/components/panel';
+import { AgentPanel } from '@/features/agent/components/panel';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* <Peek /> */}
         </div>
       </div>
-      <AgentLayout />
+      <AgentPanel />
       <HotkeysProvider />
     </>
   );

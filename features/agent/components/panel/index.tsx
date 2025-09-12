@@ -12,7 +12,7 @@ import { ResizablePanel } from '@/features/layout/components/resizable-panel';
 
 const STORAGE_KEY = 'agentWidthPx';
 
-export const AgentLayout = () => (
+export const AgentPanel = () => (
   <Show if={() => !!pageHashParams.a.get()}>
     <ResizablePanel storageKey={STORAGE_KEY} className="bg-muted">
       <Header />

@@ -4,7 +4,7 @@ import { ChatHistoryButton } from './components/chat-history';
 import { ChatMemoryButton } from './components/chat-memory';
 import { ChatTasksButton } from './components/chat-tasks';
 import { BackToChatButton } from './components/back-to-chat';
-import { HeaderSeparator } from '@/features/layout/components/header/components/header-seporator';
+import { Separator } from '@/features/layout/components/header/components/header-seporator';
 
 export const Header = () => {
   return (
@@ -27,7 +27,7 @@ const Tabs = () => (
     <ChatTasksButton />
     <ChatMemoryButton />
     <ChatHistoryButton />
-    <HeaderSeparator />
+    <Separator />
     <NewChatButton />
   </div>
 );
