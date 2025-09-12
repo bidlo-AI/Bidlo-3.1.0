@@ -2,8 +2,9 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
-import { UISync } from '@/features/layout/ui-sync';
-import { ConvexClientProvider } from '@/components/ConvexClientProvider';
+import { ConvexClientProvider } from '@/features/layout/providers/ConvexClientProvider';
+import { ThemeSubscription } from '@/features/layout/components/theme/server';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 export const metadata: Metadata = {
   title: 'Bidlo',
@@ -13,14 +14,16 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased flex flex-col min-h-screen">
-        <ConvexClientProvider>
-          <ThemeProvider attribute="class" defaultTheme="dark">
-            {children}
-            <Toaster position="top-center" />
-            <UISync />
-          </ThemeProvider>
-        </ConvexClientProvider>
+      <body className="antialiased flex min-h-screen">
+        <NuqsAdapter>
+          <ConvexClientProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem={false}>
+              {children}
+              <Toaster position="top-center" />
+              <ThemeSubscription />
+            </ThemeProvider>
+          </ConvexClientProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

@@ -5,7 +5,7 @@ import { usePreloadedQuery, Preloaded, Authenticated } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useTheme } from 'next-themes';
 
-export const UISyncClient = ({ preloaded }: { preloaded: Preloaded<typeof api.users.getUser> }) => {
+export const ThemeClient = ({ preloaded }: { preloaded: Preloaded<typeof api.users.getUser> }) => {
   return (
     <Authenticated>
       <Inner preloaded={preloaded} />

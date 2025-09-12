@@ -1,11 +1,11 @@
-import { preloadQuery } from 'convex/nextjs';
 import { api } from '@/convex/_generated/api';
+import { preloadQuery } from 'convex/nextjs';
 import { withAuth } from '@workos-inc/authkit-nextjs';
-import { UISyncClient } from './client';
+import { ThemeClient } from '@/features/layout/components/theme/client';
 
-export const UISync = async () => {
+export async function ThemeSubscription() {
   const { accessToken } = await withAuth();
   const preloaded = await preloadQuery(api.users.getUser, {}, { token: accessToken });
 
-  return <UISyncClient preloaded={preloaded} />;
-};
+  return <ThemeClient preloaded={preloaded} />;
+}
