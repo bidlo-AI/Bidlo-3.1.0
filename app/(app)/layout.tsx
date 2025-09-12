@@ -1,6 +1,7 @@
 import { Header } from '@/features/layout/components/header';
 import { HotkeysProvider } from '@/features/layout/providers/hotkeys';
 import { AgentPanel } from '@/features/agent/components/panel';
+import { Suspense } from 'react';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,8 +14,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* <Peek /> */}
         </div>
       </div>
-      <AgentPanel />
-      <HotkeysProvider />
+      <Suspense fallback={null}>
+        <AgentPanel />
+        <HotkeysProvider />
+      </Suspense>
     </>
   );
 }

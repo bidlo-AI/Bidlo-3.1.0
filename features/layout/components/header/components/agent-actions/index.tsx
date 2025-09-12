@@ -5,7 +5,6 @@ import { ChatLink } from './toggle-button';
 import { useAgentPanel } from '@/features/agent/hooks/useAgentPanel';
 
 export const AgentActions = () => {
-  // Hide actions when the agent panel is already open (any value in `a`)
   const { page } = useAgentPanel();
   if (page) return null;
 
