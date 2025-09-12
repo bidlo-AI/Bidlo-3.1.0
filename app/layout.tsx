@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { ConvexClientProvider } from '@/features/layout/providers/ConvexClientProvider';
 import { ThemeSubscription } from '@/features/layout/components/theme/server';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Bidlo',
@@ -16,13 +17,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased flex min-h-screen">
         <NuqsAdapter>
-          <ConvexClientProvider expectAuth>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem={false}>
-              {children}
-              <Toaster position="top-center" />
-              <ThemeSubscription />
-            </ThemeProvider>
-          </ConvexClientProvider>
+          {/* Wrap all content using nuqs/search params in Suspense for Next.js */}
+          <Suspense fallback={null}>
+            <ConvexClientProvider expectAuth>
+              <ThemeProvider attribute="class" defaultTheme="system" enableSystem={false}>
+                {children}
+                <Toaster position="top-center" />
+                <ThemeSubscription />
+              </ThemeProvider>
+            </ConvexClientProvider>
+          </Suspense>
         </NuqsAdapter>
       </body>
     </html>

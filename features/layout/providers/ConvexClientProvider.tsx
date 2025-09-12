@@ -18,39 +18,58 @@ export function ConvexClientProvider({ children, expectAuth }: { children: React
     </AuthKitProvider>
   );
 }
-
 function useAuthFromAuthKit() {
-  const { user, loading } = useAuth();
-  const { accessToken, getAccessToken, refresh } = useAccessToken();
+  const { user, loading: isUserLoading } = useAuth();
+  const { getAccessToken, loading: isTokenLoading, error: tokenError } = useAccessToken();
 
-  const hasIncompleteAuth = (!!user && !accessToken) || (!user && !!accessToken);
-  const isLoading = loading || hasIncompleteAuth;
-  const authenticated = !!user && !!accessToken;
+  const isLoading = (isUserLoading ?? false) || (isTokenLoading ?? false);
+  const isAuthenticated = !!user;
 
-  // Create a stable fetchAccessToken function
-  const fetchAccessToken = useCallback(
-    async ({ forceRefreshToken }: { forceRefreshToken?: boolean } = {}): Promise<string | null> => {
-      if (!user) {
-        return null;
-      }
-
-      try {
-        if (forceRefreshToken) {
-          return (await refresh()) ?? null;
-        }
-
-        return (await getAccessToken()) ?? null;
-      } catch (error) {
-        console.error('Failed to get access token:', error);
-        return null;
-      }
-    },
-    [user, refresh, getAccessToken],
-  );
+  const fetchAccessToken = useCallback(async () => {
+    if (tokenError) return null;
+    const token = await getAccessToken();
+    return token ?? null;
+  }, [getAccessToken, tokenError]);
 
   return {
     isLoading,
-    isAuthenticated: authenticated,
+    isAuthenticated,
     fetchAccessToken,
   };
 }
+
+// function useAuthFromAuthKit() {
+//   const { user, loading } = useAuth();
+//   const { accessToken, getAccessToken, refresh } = useAccessToken();
+
+//   const hasIncompleteAuth = (!!user && !accessToken) || (!user && !!accessToken);
+//   const isLoading = loading || hasIncompleteAuth;
+//   const authenticated = !!user && !!accessToken;
+
+//   // Create a stable fetchAccessToken function
+//   const fetchAccessToken = useCallback(
+//     async ({ forceRefreshToken }: { forceRefreshToken?: boolean } = {}): Promise<string | null> => {
+//       if (!user) {
+//         return null;
+//       }
+
+//       try {
+//         if (forceRefreshToken) {
+//           return (await refresh()) ?? null;
+//         }
+
+//         return (await getAccessToken()) ?? null;
+//       } catch (error) {
+//         console.error('Failed to get access token:', error);
+//         return null;
+//       }
+//     },
+//     [user, refresh, getAccessToken],
+//   );
+
+//   return {
+//     isLoading,
+//     isAuthenticated: authenticated,
+//     fetchAccessToken,
+//   };
+// }
