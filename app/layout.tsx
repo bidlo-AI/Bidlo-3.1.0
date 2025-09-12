@@ -16,18 +16,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased flex min-h-screen">
-        <NuqsAdapter>
-          {/* Wrap all content using nuqs/search params in Suspense for Next.js */}
-          <Suspense fallback={null}>
-            <ConvexClientProvider expectAuth>
-              <ThemeProvider attribute="class" defaultTheme="system" enableSystem={false}>
+        <ConvexClientProvider expectAuth>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem={false}>
+            <NuqsAdapter>
+              <Suspense fallback={null}>
                 {children}
                 <Toaster position="top-center" />
                 <ThemeSubscription />
-              </ThemeProvider>
-            </ConvexClientProvider>
-          </Suspense>
-        </NuqsAdapter>
+              </Suspense>
+            </NuqsAdapter>
+          </ThemeProvider>
+        </ConvexClientProvider>
       </body>
     </html>
   );
