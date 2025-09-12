@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased flex min-h-screen">
+      <body className="antialiased flex min-h-screen text-sm">
         <ConvexClientProvider expectAuth>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem={false}>
             <NuqsAdapter>

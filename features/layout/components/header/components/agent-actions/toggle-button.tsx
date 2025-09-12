@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { PanelRight } from 'lucide-react';
 import { useAgentPanel } from '@/features/agent/hooks/useAgentPanel';
 
-export const ChatLink = () => {
+export const AgentPanelToggle = () => {
   const { open } = useAgentPanel();
   return (
     <Button size="icon" variant="ghost" className="text-muted-foreground-opaque size-7" onMouseDown={open}>

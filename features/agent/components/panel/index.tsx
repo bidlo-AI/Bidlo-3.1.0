@@ -1,6 +1,6 @@
 'use client';
 
-import { Header } from '../header';
+import { Header } from './header';
 import dynamic from 'next/dynamic';
 import type { ComponentType } from 'react';
 import { ResizablePanel } from '@/features/layout/components/resizable-panel';

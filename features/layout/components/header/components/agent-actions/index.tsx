@@ -1,7 +1,7 @@
 'use client';
 
 import { Separator } from '@/features/layout/components/header/components/header-seporator';
-import { ChatLink } from './toggle-button';
+import { AgentPanelToggle } from './toggle-button';
 import { useAgentPanel } from '@/features/agent/hooks/useAgentPanel';
 
 export const AgentActions = () => {
@@ -11,7 +11,7 @@ export const AgentActions = () => {
   return (
     <div className="agent flex items-center">
       <Separator />
-      <ChatLink />
+      <AgentPanelToggle />
     </div>
   );
 };

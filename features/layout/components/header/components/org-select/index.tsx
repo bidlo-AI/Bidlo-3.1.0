@@ -14,7 +14,7 @@ export const OrgSelect = async () => {
   if (accessToken && !org_id) redirect('/organizations');
 
   return (
-    <div className="org">
+    <div className="org flex items-center">
       <OrgSelectClient preloaded={preloaded} selectedOrg={org_id} />
     </div>
   );

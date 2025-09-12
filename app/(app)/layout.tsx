@@ -9,10 +9,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="grid grid-app-layout flex-1 overflow-hidden relative">
         {/* <Sidebar /> */}
         <Header />
-        <div className="content">
-          {children}
-          {/* <Peek /> */}
-        </div>
+        {children}
+        {/* <Peek /> */}
       </div>
       <Suspense fallback={null}>
         <AgentPanel />
