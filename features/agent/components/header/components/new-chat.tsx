@@ -1,14 +1,14 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { pageHashParams } from "@legendapp/state/helpers/pageHashParams";
-import { Plus } from "lucide-react";
+'use client';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import { useAgentPanel } from '@/features/agent/hooks/useAgentPanel';
 
-export const NewChatButton = () => (
-  <Button
-    size="icon"
-    variant="ghost"
-    onMouseDown={() => pageHashParams.a.set("new")}
-  >
-    <Plus className="size-4" />
-  </Button>
-);
+export const NewChatButton = () => {
+  const { go } = useAgentPanel();
+
+  return (
+    <Button size="icon" variant="ghost" onMouseDown={() => go('new')}>
+      <Plus className="size-4" />
+    </Button>
+  );
+};

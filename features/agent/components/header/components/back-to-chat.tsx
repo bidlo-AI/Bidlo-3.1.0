@@ -1,21 +1,26 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { pageHashParams } from '@legendapp/state/helpers/pageHashParams';
 import { ArrowLeft } from 'lucide-react';
-import { Show } from '@legendapp/state/react';
 import { Separator } from '@/features/layout/components/header/components/header-seporator';
+import { useAgentPanel } from '@/features/agent/hooks/useAgentPanel';
 
-export const BackToChatButton = () => (
-  <Show if={() => pageHashParams.a.get() !== 'chat'}>
-    <Separator />
-    <Button
-      size="xs"
-      variant="ghost"
-      className="gap-1 [&>svg]:text-muted-foreground hover:[&>svg]:text-foreground"
-      onMouseDown={() => pageHashParams.a.set('chat')}
-    >
-      <ArrowLeft className="size-4" />
-      Back
-    </Button>
-  </Show>
-);
+export const BackToChatButton = () => {
+  const { page, go } = useAgentPanel();
+
+  if (page === 'chat') return null;
+
+  return (
+    <>
+      <Separator />
+      <Button
+        size="xs"
+        variant="ghost"
+        className="gap-1 [&>svg]:text-muted-foreground hover:[&>svg]:text-foreground"
+        onMouseDown={() => go('chat')}
+      >
+        <ArrowLeft className="size-4" />
+        Back
+      </Button>
+    </>
+  );
+};

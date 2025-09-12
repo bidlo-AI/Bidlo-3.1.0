@@ -1,14 +1,14 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { pageHashParams } from "@legendapp/state/helpers/pageHashParams";
-import { BookOpen } from "lucide-react";
+'use client';
+import { Button } from '@/components/ui/button';
+import { BookOpen } from 'lucide-react';
+import { useAgentPanel } from '@/features/agent/hooks/useAgentPanel';
 
-export const ChatMemoryButton = () => (
-  <Button
-    size="icon"
-    variant="ghost"
-    onMouseDown={() => pageHashParams.a.set("memory")}
-  >
-    <BookOpen className="size-4" />
-  </Button>
-);
+export const ChatMemoryButton = () => {
+  const { go } = useAgentPanel();
+
+  return (
+    <Button size="icon" variant="ghost" onMouseDown={() => go('memory')}>
+      <BookOpen className="size-4" />
+    </Button>
+  );
+};

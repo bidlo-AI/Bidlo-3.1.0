@@ -1,14 +1,14 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { pageHashParams } from "@legendapp/state/helpers/pageHashParams";
-import { History } from "lucide-react";
+'use client';
+import { Button } from '@/components/ui/button';
+import { History } from 'lucide-react';
+import { useAgentPanel } from '@/features/agent/hooks/useAgentPanel';
 
-export const ChatHistoryButton = () => (
-  <Button
-    size="icon"
-    variant="ghost"
-    onMouseDown={() => pageHashParams.a.set("history")}
-  >
-    <History className="size-4" />
-  </Button>
-);
+export const ChatHistoryButton = () => {
+  const { go } = useAgentPanel();
+
+  return (
+    <Button size="icon" variant="ghost" onMouseDown={() => go('history')}>
+      <History className="size-4" />
+    </Button>
+  );
+};
