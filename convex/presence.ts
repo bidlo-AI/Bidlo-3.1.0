@@ -8,7 +8,9 @@ export const presence = new Presence(components.presence);
 export const heartbeat = mutation({
   args: { roomId: v.string(), userId: v.string(), sessionId: v.string(), interval: v.number() },
   handler: async (ctx, { roomId, userId, sessionId, interval }) => {
-    // TODO: Add your auth checks here.
+    const user = await ctx.auth.getUserIdentity();
+    if (!user || user.email !== userId) throw new Error('User not authenticated');
+
     return await presence.heartbeat(ctx, roomId, userId, sessionId, interval);
   },
 });
