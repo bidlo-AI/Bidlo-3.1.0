@@ -12,7 +12,7 @@ export function Presence({ block_id }: { block_id: string }) {
   return (
     <div className="presence flex items-center">
       <FacePile presenceState={presenceState ?? []} />
-      <Separator />
+      <Separator className="ml-2.5" />
     </div>
   );
 }

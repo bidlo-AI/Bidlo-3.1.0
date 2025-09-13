@@ -10,6 +10,7 @@ export const Favorites = () => {
         <Button
           size="icon"
           variant="ghost"
+          className="text-muted-foreground-opaque"
           onMouseDown={() => {
             console.log('favorites');
           }}
