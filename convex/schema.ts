@@ -23,7 +23,9 @@ export default defineSchema({
       v.literal('brown'),
       v.literal('default'),
     ),
-  }),
+  })
+    .index('by_email', ['email'])
+    .index('by_workos_id', ['workos_id']),
   organizations: defineTable({
     workos_id: v.string(),
     name: v.string(),
@@ -55,4 +57,41 @@ export default defineSchema({
     organizationId: v.string(), // workos organization id
     timestamp: v.number(),
   }).index('by_organization', ['organizationId']),
+
+  // Presence component tables (localized copy from @convex-dev/presence)
+  presence: defineTable({
+    roomId: v.string(),
+    userId: v.string(),
+    online: v.boolean(),
+    lastDisconnected: v.number(),
+  })
+    .index('user_online_room', ['userId', 'online', 'roomId'])
+    .index('room_order', ['roomId', 'online', 'lastDisconnected']),
+
+  presence_sessions: defineTable({
+    roomId: v.string(),
+    userId: v.string(),
+    sessionId: v.string(),
+  })
+    .index('room_user_session', ['roomId', 'userId', 'sessionId'])
+    .index('sessionId', ['sessionId']),
+
+  presence_roomTokens: defineTable({
+    token: v.string(),
+    roomId: v.string(),
+  })
+    .index('token', ['token'])
+    .index('room', ['roomId']),
+
+  presence_sessionTokens: defineTable({
+    token: v.string(),
+    sessionId: v.string(),
+  })
+    .index('token', ['token'])
+    .index('sessionId', ['sessionId']),
+
+  presence_sessionTimeouts: defineTable({
+    sessionId: v.string(),
+    scheduledFunctionId: v.id('_scheduled_functions'),
+  }).index('sessionId', ['sessionId']),
 });

@@ -1,16 +1,18 @@
 'use client';
 
 import { api } from '@/convex/_generated/api';
-import usePresence from '@convex-dev/presence/react';
-// import usePresence from './hooks/usePresence';
-import FacePile from '@convex-dev/presence/facepile';
+// import usePresence from '@convex-dev/presence/react';
+import usePresence from './hooks/usePresence/index.js';
+import FacePile from './components/facepile';
+import { Separator } from '@/features/layout/components/header/components/header-seporator';
 
-export function Presence({ block_id, email }: { block_id: string; email: string }) {
-  const presenceState = usePresence(api.presence, block_id, email);
+export function Presence({ block_id }: { block_id: string }) {
+  const presenceState = usePresence(api.presence, block_id);
 
   return (
-    <div className="presence flex items-center gap-4 text-muted-foreground">
+    <div className="presence flex items-center">
       <FacePile presenceState={presenceState ?? []} />
+      <Separator />
     </div>
   );
 }

@@ -10,7 +10,7 @@ import useSingleFlight from './useSingleFlight.js';
 // Use of this hook requires passing in a reference to the Convex presence
 // component defined in your Convex app. See ../../example/src/App.tsx for an
 // example of how to incorporate this hook into your application.
-export default function usePresence(presence, roomId, userId, interval = 10000, convexUrl) {
+export default function usePresence(presence, roomId, interval = 10000, convexUrl) {
   const hasMounted = useRef(false);
   const convex = useConvex();
   const baseUrl = convexUrl ?? convex.url;
@@ -24,7 +24,7 @@ export default function usePresence(presence, roomId, userId, interval = 10000, 
   const heartbeat = useSingleFlight(useMutation(presence.heartbeat));
   const disconnect = useSingleFlight(useMutation(presence.disconnect));
   useEffect(() => {
-    // Reset session state when roomId or userId changes.
+    // Reset session state when roomId changes.
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -35,7 +35,7 @@ export default function usePresence(presence, roomId, userId, interval = 10000, 
     setSessionId(crypto.randomUUID());
     setSessionToken(null);
     setRoomToken(null);
-  }, [roomId, userId, disconnect]);
+  }, [roomId, disconnect]);
   useEffect(() => {
     // Update refs whenever tokens change.
     sessionTokenRef.current = sessionToken;
@@ -44,7 +44,7 @@ export default function usePresence(presence, roomId, userId, interval = 10000, 
   useEffect(() => {
     // Periodic heartbeats.
     const sendHeartbeat = async () => {
-      const result = await heartbeat({ roomId, userId, sessionId, interval });
+      const result = await heartbeat({ roomId, sessionId, interval });
       setRoomToken(result.roomToken);
       setSessionToken(result.sessionToken);
     };
@@ -109,19 +109,11 @@ export default function usePresence(presence, roomId, userId, interval = 10000, 
         }
       }
     };
-  }, [heartbeat, disconnect, roomId, userId, baseUrl, interval, sessionId]);
+  }, [heartbeat, disconnect, roomId, baseUrl, interval, sessionId]);
   useEffect(() => {
     hasMounted.current = true;
   }, []);
   const state = useQuery(presence.list, roomToken ? { roomToken } : 'skip');
-  return useMemo(
-    () =>
-      state?.slice().sort((a, b) => {
-        if (a.userId === userId) return -1;
-        if (b.userId === userId) return 1;
-        return 0;
-      }),
-    [state, userId],
-  );
+  return useMemo(() => state, [state]);
 }
 //# sourceMappingURL=index.js.map

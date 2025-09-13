@@ -1,9 +1,9 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { Star } from 'lucide-react';
+import { Settings2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
-export const Favorites = () => {
+export const More = () => {
   return (
     <Tooltip delayDuration={500}>
       <TooltipTrigger asChild>
@@ -11,14 +11,14 @@ export const Favorites = () => {
           size="icon"
           variant="ghost"
           onMouseDown={() => {
-            console.log('favorites');
+            console.log('More');
           }}
         >
-          <Star className="size-4" />
+          <Settings2 className="size-4" />
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>Add to your favorites</p>
+        <p>Page settings</p>
       </TooltipContent>
     </Tooltip>
   );
