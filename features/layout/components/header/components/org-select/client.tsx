@@ -3,7 +3,6 @@
 import { api } from '@/convex/_generated/api';
 import { Preloaded, usePreloadedQuery } from 'convex/react';
 import { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { handleSwitchOrganization } from '@/features/auth/organizations/actions/switchOrganization';
 import { OrgSelectPopoverContent } from './content';
@@ -26,7 +25,7 @@ export const OrgSelectClient = ({
 
   // Local state for popover open/close
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  // Note: We avoid Next's router.refresh() here since we want a hard reload
 
   // Handle selecting an organization by switching via WorkOS, then refresh
   const onSelect = async (orgId: string) => {
@@ -36,7 +35,9 @@ export const OrgSelectClient = ({
     }
     await handleSwitchOrganization({ workosOrgId: orgId, goToOrg: false });
     setOpen(false);
-    router.refresh();
+    // Force a hard reload so that all JWT-dependent components reinitialize
+    // and the updated session/organization context is applied everywhere.
+    window.location.reload();
   };
 
   return (
