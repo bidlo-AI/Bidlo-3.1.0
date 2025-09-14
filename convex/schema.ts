@@ -23,6 +23,10 @@ export default defineSchema({
       v.literal('brown'),
       v.literal('default'),
     ),
+    // Optional: server-provided default width for the Agent panel (in px)
+    agent_panel_width: v.optional(v.number()),
+    // Optional: server-provided default width for the Sidebar (in px)
+    sidebar_width: v.optional(v.number()),
   })
     .index('by_email', ['email'])
     .index('by_workos_id', ['workos_id']),

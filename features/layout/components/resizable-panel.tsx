@@ -5,22 +5,38 @@ import { useCallback, useLayoutEffect, useRef } from 'react';
 interface ResizablePanelProps {
   children: React.ReactNode;
   storageKey: string;
+  /** Width used for reset (double-click). Defaults to 320px. */
   defaultWidth?: number;
+  /** Initial width used on first render (or when no stored width exists). */
+  startingWidth?: number;
   minWidth?: number;
   maxWidth?: number;
   className?: string;
   /** Which side the panel is anchored to; affects drag direction and handle placement. */
   side?: 'left' | 'right';
+  /** Optional debounced callback during drag; invoked with the current width (px). */
+  onWidthChange?: (width: number) => void;
+  /** Called once when the user finishes a drag (mouse/touch up) with the final width. */
+  onWidthChangeEnd?: (width: number) => void;
+  /** Called when the user double-clicks to reset the width back to default. */
+  onWidthReset?: (width: number) => void;
+  /** Debounce delay (ms) used for onWidthChange; defaults to 400ms. */
+  debounceMs?: number;
 }
 
 export function ResizablePanel({
   children,
   storageKey,
   defaultWidth = 320,
+  startingWidth,
   minWidth = 250,
   maxWidth = 800,
   className = '',
   side = 'left',
+  onWidthChange,
+  onWidthChangeEnd,
+  onWidthReset,
+  debounceMs = 400,
 }: ResizablePanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   // Track an in-flight rAF, active drag cleanup, and prior selection state.
@@ -28,16 +44,19 @@ export function ResizablePanel({
   const activeCleanupRef = useRef<(() => void) | null>(null);
   const prevUserSelectRef = useRef<string | null>(null);
   const lastAppliedWidthRef = useRef<number | null>(null);
+  const debounceIdRef = useRef<number | null>(null);
 
   // (moved narrowing helper inside the drag handler to keep hooks stable)
 
   /** Read once; never causes a paint on mount. */
   const readInitialWidth = useCallback((): number => {
-    if (typeof window === 'undefined') return defaultWidth;
+    // Fallback to startingWidth first; then to defaultWidth.
+    const fallback = typeof startingWidth === 'number' ? startingWidth : defaultWidth;
+    if (typeof window === 'undefined') return fallback;
     const stored = window.localStorage.getItem(storageKey);
     const val = stored ? parseInt(stored, 10) : NaN;
-    return Number.isFinite(val) ? val : defaultWidth;
-  }, [defaultWidth, storageKey]);
+    return Number.isFinite(val) ? val : fallback;
+  }, [defaultWidth, startingWidth, storageKey]);
 
   /* -------------------------------------------------------------- */
   /* pointer-drag handler                                            */
@@ -94,6 +113,16 @@ export function ResizablePanel({
                 lastAppliedWidthRef.current = pendingWidth;
               }
             }
+            // Debounce notify during drag to avoid spamming listeners.
+            if (onWidthChange) {
+              if (debounceIdRef.current !== null) {
+                window.clearTimeout(debounceIdRef.current);
+              }
+              debounceIdRef.current = window.setTimeout(() => {
+                debounceIdRef.current = null;
+                onWidthChange(pendingWidth);
+              }, debounceMs);
+            }
           });
         }
       };
@@ -125,6 +154,12 @@ export function ResizablePanel({
         if (panelRef.current) {
           const final = lastAppliedWidthRef.current ?? panelRef.current.getBoundingClientRect().width;
           window.localStorage.setItem(storageKey, `${final}`);
+          // Flush any pending debounced call and emit final once.
+          if (debounceIdRef.current !== null) {
+            window.clearTimeout(debounceIdRef.current);
+            debounceIdRef.current = null;
+          }
+          if (onWidthChangeEnd) onWidthChangeEnd(final);
         }
         teardown();
       };
@@ -140,7 +175,7 @@ export function ResizablePanel({
       pointerTarget.addEventListener('pointercancel', onCancel, { passive: true });
       activeCleanupRef.current = teardown;
     },
-    [maxWidth, minWidth, storageKey, side],
+    [debounceMs, maxWidth, minWidth, onWidthChange, onWidthChangeEnd, side, storageKey],
   );
 
   /* -------------------------------------------------------------- */
@@ -154,7 +189,14 @@ export function ResizablePanel({
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(storageKey);
     }
-  }, [defaultWidth, storageKey]);
+    // Clear pending debounce and notify reset
+    if (debounceIdRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(debounceIdRef.current);
+      debounceIdRef.current = null;
+    }
+    if (onWidthReset) onWidthReset(defaultWidth);
+    if (onWidthChangeEnd) onWidthChangeEnd(defaultWidth);
+  }, [defaultWidth, storageKey, onWidthReset, onWidthChangeEnd]);
 
   /* -------------------------------------------------------------- */
   /* set initial width on mount                                      */
@@ -169,6 +211,10 @@ export function ResizablePanel({
     return () => {
       if (activeCleanupRef.current) {
         activeCleanupRef.current();
+      }
+      if (debounceIdRef.current !== null && typeof window !== 'undefined') {
+        window.clearTimeout(debounceIdRef.current);
+        debounceIdRef.current = null;
       }
     };
   }, [readInitialWidth]);
@@ -188,7 +234,8 @@ export function ResizablePanel({
   const panel = (
     <div
       ref={panelRef}
-      style={{ width: defaultWidth }}
+      // Ensure first paint matches the intended initial width to avoid layout shift.
+      style={{ width: typeof startingWidth === 'number' ? startingWidth : defaultWidth }}
       className={`flex flex-col h-screen overflow-hidden ${className}`}
     >
       {children}

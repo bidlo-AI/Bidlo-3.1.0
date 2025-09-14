@@ -1,17 +1,9 @@
-import { ResizablePanel } from '../resizable-panel';
-const STORAGE_KEY = 'sidebarWidthPx';
+import { SidebarWrapper } from './wrapper';
 
-export const Sidebar = () => {
+export const Sidebar = ({ startingWidth }: { startingWidth?: number }) => {
   return (
-    <ResizablePanel
-      side="right"
-      minWidth={50}
-      maxWidth={400}
-      defaultWidth={200}
-      className="bg-muted"
-      storageKey={STORAGE_KEY}
-    >
+    <SidebarWrapper startingWidth={startingWidth}>
       <div>Sidebar</div>
-    </ResizablePanel>
+    </SidebarWrapper>
   );
 };

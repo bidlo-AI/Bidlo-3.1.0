@@ -1,5 +1,6 @@
 import { internal } from './_generated/api';
-import { internalQuery, query } from './_generated/server';
+import { internalQuery, mutation, query } from './_generated/server';
+import { v } from 'convex/values';
 import schema from './schema';
 import { crud } from 'convex-helpers/server/crud';
 
@@ -14,6 +15,28 @@ export const getUser: ReturnType<typeof query> = query({
 
     if (!workos_user_id) throw new Error('User not authenticated');
     return await ctx.runQuery(internal.users.getByWorkOSId, { workos_id: workos_user_id });
+  },
+});
+
+// --------------------------------
+// MUTATIONS
+// --------------------------------
+export const setLayoutWidth = mutation({
+  // updates either agent_panel_width or sidebar_width for the user (providing this server side prevents layout shift on page load)
+  args: { target: v.union(v.literal('agent_panel_width'), v.literal('sidebar_width')), width: v.number() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity?.subject) throw new Error('User not authenticated');
+    const workos_user_id = identity.subject;
+
+    const userDoc = await ctx.db
+      .query('users')
+      .filter((q) => q.eq(q.field('workos_id'), workos_user_id))
+      .first();
+    if (!userDoc) throw new Error('User not found');
+
+    await ctx.db.patch(userDoc._id, { [args.target]: args.width } as Partial<typeof userDoc>);
+    return { success: true };
   },
 });
 

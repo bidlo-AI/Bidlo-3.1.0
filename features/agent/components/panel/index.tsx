@@ -9,6 +9,8 @@ import { Memory } from './pages/memory';
 import { Tasks } from './pages/task';
 import { History } from './pages/history';
 import { New } from './pages/new';
+import { api } from '@/convex/_generated/api';
+import { useMutation } from 'convex/react';
 
 const STORAGE_KEY = 'agentWidthPx';
 
@@ -21,15 +23,25 @@ const PAGES: Record<string, ComponentType> = {
   new: New,
 };
 
-export const AgentPanel = () => {
+export const AgentPanel = ({ startingWidth }: { startingWidth?: number }) => {
   const { page } = useAgentPanel();
-  if (!page) return null;
+  const setWidth = useMutation(api.users.setLayoutWidth);
 
-  // Choose the component based on `a` param; fall back to `chat`
-  const Page = PAGES[page] ?? PAGES['chat'];
+  // Hide panel entirely when no page is selected
+  if (!page) return null;
+  const Page = PAGES[page];
+
+  //handlers
+  const handleWdithChange = (w: number) => setWidth({ target: 'agent_panel_width', width: Math.round(w) });
 
   return (
-    <ResizablePanel storageKey={STORAGE_KEY} className="bg-muted">
+    <ResizablePanel
+      storageKey={STORAGE_KEY}
+      className="bg-muted"
+      startingWidth={startingWidth}
+      onWidthChangeEnd={handleWdithChange}
+      onWidthReset={handleWdithChange}
+    >
       <Header />
       <Page />
     </ResizablePanel>
