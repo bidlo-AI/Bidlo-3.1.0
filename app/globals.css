@@ -519,6 +519,9 @@
   --ring: var(--border);
   --hover: oklch(1 0.0001 274.03 / 5.5%);
 
+  /* Small shadow token override (dark mode) */
+  --shadow-sm: rgb(44, 44, 43) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 3px 8px;
+
   /* Sidebar mirrors UI */
   --sidebar: var(--card);
   --sidebar-foreground: var(--foreground);
