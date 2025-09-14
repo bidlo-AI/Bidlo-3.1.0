@@ -8,8 +8,8 @@ import { AgentActions } from '@/features/layout/components/header/components/age
 export const Header = () => (
   <>
     <div className="spacer-l" />
+    {/* sidebar toggle for mobile & minimized sidebar */}
     <OrgSelect />
-
     <Suspense fallback={null}>
       <AgentActions />
     </Suspense>
