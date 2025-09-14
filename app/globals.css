@@ -791,11 +791,15 @@
 /* ----------------------------------------------------------- */
 .grid-app-layout {
   display: grid;
-  grid-template-columns: 12px auto 1fr auto auto auto 12px;
+  grid-template-columns: 12px auto auto 1fr auto auto auto 12px;
   grid-template-rows: 40px auto 0;
   grid-template-areas:
-    'spacer-l org crumbs presence actions agent spacer-r'
-    'content content content content content content content';
+    'spacer-l sidebar org crumbs presence actions agent spacer-r'
+    'content content content content content content content content';
+}
+
+.grid-app-layout .sidebar {
+  grid-area: sidebar;
 }
 .grid-app-layout .org {
   grid-area: org;

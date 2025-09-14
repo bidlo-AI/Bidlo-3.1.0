@@ -48,15 +48,10 @@ export default async function Home() {
   );
 }
 
-export const RecentCard = () => (
-  <div className="flex gap-1.5">
-    <div className="rounded-2xl bg-muted h-40 aspect-[2/3]"></div>
-  </div>
-);
+// export const RecentCard = () => (
+//   <div className="flex gap-1.5">
+//     <div className="rounded-2xl bg-muted h-40 aspect-[2/3]"></div>
+//   </div>
+// );
 
-export const NewsCard = () => <div className="w-full rounded-2xl mb-4 bg-muted aspect-[3/2]"></div>;
-
-//! BLOCK TYPES
-// - Chat Thread
-// - Page (single/multiple widets)
-// - Document
+// export const NewsCard = () => <div className="w-full rounded-2xl mb-4 bg-muted aspect-[3/2]"></div>;
