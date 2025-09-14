@@ -58,6 +58,9 @@ export default defineSchema({
     timestamp: v.number(),
   }).index('by_organization', ['organizationId']),
 
+  // ------------------------------------------------------------
+  // PRESENCE
+  // ------------------------------------------------------------
   // Presence component tables (localized copy from @convex-dev/presence)
   presence: defineTable({
     roomId: v.string(),

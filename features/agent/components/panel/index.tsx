@@ -1,20 +1,24 @@
 'use client';
 
 import { Header } from './header';
-import dynamic from 'next/dynamic';
 import type { ComponentType } from 'react';
 import { ResizablePanel } from '@/features/layout/components/resizable-panel';
 import { useAgentPanel } from '@/features/agent/hooks/useAgentPanel';
+import { Chat } from './pages/chat';
+import { Memory } from './pages/memory';
+import { Tasks } from './pages/task';
+import { History } from './pages/history';
+import { New } from './pages/new';
 
 const STORAGE_KEY = 'agentWidthPx';
 
-// Map query param to lazily-loaded page components for clean routing and code-splitting
+// Map query param to statically imported page components for snappy first open
 const PAGES: Record<string, ComponentType> = {
-  chat: dynamic(() => import('./pages/chat').then((m) => m.Chat)),
-  memory: dynamic(() => import('./pages/memory').then((m) => m.Memory)),
-  tasks: dynamic(() => import('./pages/task').then((m) => m.Tasks)),
-  history: dynamic(() => import('./pages/history').then((m) => m.History)),
-  new: dynamic(() => import('./pages/new').then((m) => m.New)),
+  chat: Chat,
+  memory: Memory,
+  tasks: Tasks,
+  history: History,
+  new: New,
 };
 
 export const AgentPanel = () => {
