@@ -14,7 +14,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return (
     <>
-      {/* grid-app-layout positions SSR and Client components in fixed positions */}
       <Sidebar startingWidth={sidebar_width} />
       <div className="grid grid-app-layout flex-1 overflow-hidden relative">
         <Header />

@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { OrgSelect } from '@/features/layout/components/header/components/org-select';
 import { AgentActions } from '@/features/layout/components/header/components/agent-actions';
+import { SidebarActions } from '@/features/layout/components/header/components/sidebar-actions';
 
 // import { Crumbs } from "./components/crumbs";
 // import { TeamPresence } from "./components/team-presence/presence-client";
@@ -8,7 +9,8 @@ import { AgentActions } from '@/features/layout/components/header/components/age
 export const Header = () => (
   <>
     <div className="spacer-l" />
-    {/* sidebar toggle for mobile & minimized sidebar */}
+    {/* sidebar toggle for mobile must have "sidebar" className */}
+    <SidebarActions />
     <OrgSelect />
     <Suspense fallback={null}>
       <AgentActions />
