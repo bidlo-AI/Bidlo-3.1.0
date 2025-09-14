@@ -1,6 +1,7 @@
 import { withAuth } from '@workos-inc/authkit-nextjs';
 import { HistoryButton } from '@/features/agent/components/home/components/history-button';
-import Link from 'next/link';
+import { PromptInput } from '@/features/agent/components/home/components/prompt-input';
+// import Link from 'next/link';
 
 export default async function Home() {
   // Ensure this page is gated by auth; we don't need the token here.
@@ -16,14 +17,17 @@ export default async function Home() {
           </span>{' '}
           how can I help?
         </span>
-        <Link href="/chat_block" className="w-full">
+        <PromptInput />
+        {/* <Link href="/chat_block" className="w-full">
           <div
             id="chat-input"
             className="shadow-sm text-base rounded-3xl bg-muted border h-fit min-h-12 w-full px-4 py-3"
           >
-            <span className="text-muted-foreground-opaque">Search or Ask anything...</span>
+            <input className="text-muted-foreground-opaque"
+            placeholder="Search or Ask anything..."
+            />
           </div>
-        </Link>
+        </Link> */}
         {/* <UserInfo preloaded={preloaded} /> */}
         {/* <div className="w-full flex flex-col gap-2">
           <span className="font-label">Recent</span>
