@@ -3,8 +3,10 @@ import { SidebarContent } from './components/content';
 
 export const Sidebar = ({ startingWidth }: { startingWidth?: number }) => {
   return (
-    <SidebarWrapper startingWidth={startingWidth}>
-      <SidebarContent />
-    </SidebarWrapper>
+    <div className="hidden md:flex">
+      <SidebarWrapper startingWidth={startingWidth}>
+        <SidebarContent />
+      </SidebarWrapper>
+    </div>
   );
 };

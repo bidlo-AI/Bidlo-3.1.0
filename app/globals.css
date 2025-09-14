@@ -825,3 +825,9 @@
 .grid-app-layout .spacer-r {
   grid-area: spacer-r;
 }
+
+@media (max-width: 768px) {
+  .grid-app-layout {
+    grid-template-columns: 4px auto auto 1fr auto auto auto 4px;
+  }
+}

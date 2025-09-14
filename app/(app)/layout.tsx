@@ -10,11 +10,11 @@ import { api } from '@/convex/_generated/api';
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const { accessToken } = await withAuth();
   const preloaded = await preloadQuery(api.users.getUser, {}, { token: accessToken });
-  const { agent_panel_width, sidebar_width } = await preloadedQueryResult(preloaded);
+  const { agent_panel_width, sidebar_width, sidebar_hidden } = await preloadedQueryResult(preloaded);
 
   return (
     <>
-      <Sidebar startingWidth={sidebar_width} />
+      <Sidebar startingWidth={sidebar_width} hidden={sidebar_hidden} />
       <div className="grid grid-app-layout flex-1 overflow-hidden relative">
         <Header />
         {children}
