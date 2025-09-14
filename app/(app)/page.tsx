@@ -1,11 +1,7 @@
-import { withAuth } from '@workos-inc/authkit-nextjs';
 import { HistoryButton } from '@/features/agent/components/home/components/history-button';
 import Link from 'next/link';
 
 export default async function Home() {
-  // Ensure this page is gated by auth; we don't need the token here.
-  await withAuth();
-
   return (
     <>
       <HistoryButton />

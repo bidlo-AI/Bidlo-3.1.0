@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 
 interface ResizablePanelProps {
   children: React.ReactNode;
@@ -27,6 +27,9 @@ export function ResizablePanel({
   const rafIdRef = useRef<number | null>(null);
   const activeCleanupRef = useRef<(() => void) | null>(null);
   const prevUserSelectRef = useRef<string | null>(null);
+  const lastAppliedWidthRef = useRef<number | null>(null);
+
+  // (moved narrowing helper inside the drag handler to keep hooks stable)
 
   /** Read once; never causes a paint on mount. */
   const readInitialWidth = useCallback((): number => {
@@ -45,7 +48,7 @@ export function ResizablePanel({
 
       e.preventDefault();
       // Keep pointer events routed to the handle even if the pointer leaves it.
-      const pointerTarget = e.currentTarget;
+      const pointerTarget = e.currentTarget as HTMLDivElement;
       const pointerId = e.pointerId;
       try {
         pointerTarget.setPointerCapture(pointerId);
@@ -54,17 +57,29 @@ export function ResizablePanel({
       // Improve UX: avoid accidental text selection while dragging.
       prevUserSelectRef.current = document.body.style.userSelect;
       document.body.style.userSelect = 'none';
+      // Hint the browser that width will change while dragging.
+      panelRef.current.style.willChange = 'width';
 
       const startX = e.clientX;
       const startWidth = panelRef.current.getBoundingClientRect().width;
       let frameRequested = false;
       let pendingWidth = startWidth;
 
+      // Narrowing helper for PointerEvent.getCoalescedEvents without using `any`.
+      type PointerEventWithCoalesced = PointerEvent & {
+        getCoalescedEvents: () => PointerEvent[];
+      };
+      const hasCoalescedEvents = (evt: PointerEvent): evt is PointerEventWithCoalesced =>
+        typeof (evt as Partial<PointerEventWithCoalesced>).getCoalescedEvents === 'function';
+
       const onMove = (moveEvt: PointerEvent) => {
         // Compute width based on which side the panel is anchored to.
         // left: dragging left increases width (deltaX negative)
         // right: dragging right increases width (deltaX positive)
-        const deltaX = moveEvt.clientX - startX;
+        // Prefer coalesced pointer events for smoother, lower-overhead handling.
+        const coalesced = hasCoalescedEvents(moveEvt) ? moveEvt.getCoalescedEvents() : undefined;
+        const latestEvent = coalesced && coalesced.length ? coalesced[coalesced.length - 1] : moveEvt;
+        const deltaX = latestEvent.clientX - startX;
         let w = side === 'left' ? startWidth - deltaX : startWidth + deltaX;
         w = Math.max(minWidth, Math.min(maxWidth, w));
         pendingWidth = w;
@@ -73,16 +88,21 @@ export function ResizablePanel({
           rafIdRef.current = window.requestAnimationFrame(() => {
             frameRequested = false;
             if (panelRef.current) {
-              panelRef.current.style.width = `${pendingWidth}px`; // ⚡ batched via rAF
+              // Avoid redundant writes if value hasn't changed.
+              if (lastAppliedWidthRef.current !== pendingWidth) {
+                panelRef.current.style.width = `${pendingWidth}px`; // ⚡ batched via rAF
+                lastAppliedWidthRef.current = pendingWidth;
+              }
             }
           });
         }
       };
 
       const teardown = () => {
-        document.removeEventListener('pointermove', onMove);
-        document.removeEventListener('pointerup', onUp);
-        document.removeEventListener('pointercancel', onCancel);
+        // Listeners were attached to the handle; remove them there.
+        pointerTarget.removeEventListener('pointermove', onMove);
+        pointerTarget.removeEventListener('pointerup', onUp);
+        pointerTarget.removeEventListener('pointercancel', onCancel);
         try {
           pointerTarget.releasePointerCapture(pointerId);
         } catch {}
@@ -94,13 +114,16 @@ export function ResizablePanel({
           document.body.style.userSelect = prevUserSelectRef.current;
           prevUserSelectRef.current = null;
         }
+        if (panelRef.current) {
+          panelRef.current.style.willChange = '';
+        }
         activeCleanupRef.current = null;
       };
 
       const onUp = () => {
         /* persist once – no noisy writes while dragging */
         if (panelRef.current) {
-          const final = panelRef.current.getBoundingClientRect().width;
+          const final = lastAppliedWidthRef.current ?? panelRef.current.getBoundingClientRect().width;
           window.localStorage.setItem(storageKey, `${final}`);
         }
         teardown();
@@ -111,9 +134,10 @@ export function ResizablePanel({
         teardown();
       };
 
-      document.addEventListener('pointermove', onMove);
-      document.addEventListener('pointerup', onUp);
-      document.addEventListener('pointercancel', onCancel);
+      // With pointer capture, events will continue to fire on the handle itself.
+      pointerTarget.addEventListener('pointermove', onMove, { passive: true });
+      pointerTarget.addEventListener('pointerup', onUp, { passive: true });
+      pointerTarget.addEventListener('pointercancel', onCancel, { passive: true });
       activeCleanupRef.current = teardown;
     },
     [maxWidth, minWidth, storageKey, side],
@@ -125,6 +149,7 @@ export function ResizablePanel({
   const resetWidth = useCallback(() => {
     if (!panelRef.current) return;
     panelRef.current.style.width = `${defaultWidth}px`;
+    lastAppliedWidthRef.current = defaultWidth;
     // Clear persisted custom width so next load uses the default
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(storageKey);
@@ -134,9 +159,11 @@ export function ResizablePanel({
   /* -------------------------------------------------------------- */
   /* set initial width on mount                                      */
   /* -------------------------------------------------------------- */
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (panelRef.current) {
-      panelRef.current.style.width = `${readInitialWidth()}px`;
+      const initial = readInitialWidth();
+      panelRef.current.style.width = `${initial}px`;
+      lastAppliedWidthRef.current = initial;
     }
     // Ensure any active drag listeners/raf are cleaned if we unmount mid-drag.
     return () => {
