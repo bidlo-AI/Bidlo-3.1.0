@@ -236,7 +236,7 @@ export function ResizablePanel({
       ref={panelRef}
       // Ensure first paint matches the intended initial width to avoid layout shift.
       style={{ width: typeof startingWidth === 'number' ? startingWidth : defaultWidth }}
-      className={`flex flex-col h-screen overflow-hidden ${className}`}
+      className={`flex flex-col h-full overflow-hidden ${className}`}
     >
       {children}
     </div>

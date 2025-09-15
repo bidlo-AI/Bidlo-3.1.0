@@ -37,7 +37,7 @@ export const AgentPanel = ({ startingWidth }: { startingWidth?: number }) => {
   return (
     <ResizablePanel
       storageKey={STORAGE_KEY}
-      className="bg-muted"
+      className="bg-muted h-screen"
       startingWidth={startingWidth}
       onWidthChangeEnd={handleWdithChange}
       onWidthReset={handleWdithChange}

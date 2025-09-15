@@ -1,4 +1,4 @@
-import { SidebarWrapper } from './wrapper';
+import { SidebarWrapper } from './components/wrapper';
 import { SidebarContent } from './components/content';
 
 export const Sidebar = ({ startingWidth }: { startingWidth?: number }) => {
