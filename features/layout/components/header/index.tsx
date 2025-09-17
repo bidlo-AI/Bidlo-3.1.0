@@ -9,7 +9,6 @@ import { SidebarActions } from '@/features/layout/components/header/components/s
 export const Header = () => (
   <>
     <div className="spacer-l" />
-    {/* sidebar toggle for mobile must have "sidebar" className */}
     <SidebarActions />
     <OrgSelect />
     <Suspense fallback={null}>

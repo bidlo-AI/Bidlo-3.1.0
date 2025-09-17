@@ -10,7 +10,12 @@ export const AgentPanelToggle = () => {
     // Tooltip for the agent panel toggle
     <Tooltip delayDuration={500}>
       <TooltipTrigger asChild>
-        <Button size="icon" variant="ghost" className="text-muted-foreground-opaque size-7" onMouseDown={open}>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="text-primary hover:text-primary/80 hover:bg-primary/10 size-7"
+          onMouseDown={open}
+        >
           <PanelRight className="size-4" />
         </Button>
       </TooltipTrigger>

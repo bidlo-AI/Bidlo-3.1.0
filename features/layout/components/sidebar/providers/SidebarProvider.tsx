@@ -9,6 +9,14 @@ import { useMutation } from 'convex/react';
 interface SidebarState {
   sidebar_hidden: boolean;
   setSidebar: (hidden: boolean) => void;
+  toggleSidebar: () => void;
+  /** Ephemeral UI state: whether the overlay sidebar is expanded while hidden */
+  overlay_open: boolean;
+  openOverlay: () => void;
+  closeOverlay: () => void;
+  /** Current sidebar panel width in px (client-only; persisted elsewhere) */
+  panel_width: number;
+  setPanelWidth: (width: number) => void;
 }
 
 export const SidebarContext = createContext<Observable<SidebarState> | null>(null);
@@ -21,17 +29,40 @@ export const SidebarProvider = ({
   sidebar_hidden: boolean;
 }) => {
   const toggleSidebar = useMutation(api.users.toggleSidebar);
+  const initialPanelWidth = (() => {
+    if (typeof window !== 'undefined') {
+      const stored = window.localStorage.getItem('sidebarWidthPx');
+      const val = stored ? parseInt(stored, 10) : NaN;
+      if (Number.isFinite(val)) return val;
+    }
+    return 200;
+  })();
   const state$ = useObservable({
     sidebar_hidden,
+    overlay_open: false,
+    panel_width: initialPanelWidth,
+    toggleSidebar: () => {
+      const hidden = !state$.sidebar_hidden.get();
+      state$.setSidebar(hidden);
+    },
     setSidebar: (hidden: boolean) => {
       state$.sidebar_hidden.set(hidden);
       toggleSidebar({ hidden });
+    },
+    openOverlay: () => {
+      state$.overlay_open.set(true);
+    },
+    closeOverlay: () => {
+      state$.overlay_open.set(false);
+    },
+    setPanelWidth: (width: number) => {
+      state$.panel_width.set(width);
     },
   });
   return <SidebarContext.Provider value={state$}>{children}</SidebarContext.Provider>;
 };
 
-export const useLayout = () => {
+export const useSidebar = () => {
   const context = useContext(SidebarContext);
   if (!context) {
     throw new Error('useLayoutContext must be used within a SidebarProvider');
