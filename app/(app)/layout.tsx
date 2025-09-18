@@ -6,18 +6,18 @@ import { Suspense } from 'react';
 import { withAuth } from '@workos-inc/authkit-nextjs';
 import { preloadQuery, preloadedQueryResult } from 'convex/nextjs';
 import { api } from '@/convex/_generated/api';
+import { SidebarProvider } from '@/features/layout/components/sidebar/providers/SidebarProvider';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const { accessToken } = await withAuth();
   const preloaded = await preloadQuery(api.users.getUser, {}, { token: accessToken });
-  const { agent_panel_width, sidebar_width } = await preloadedQueryResult(preloaded);
+  const { sidebar_hidden, sidebar_width, agent_panel_width } = await preloadedQueryResult(preloaded);
 
   return (
     <>
-      {/* grid-app-layout positions SSR and Client components in fixed positions */}
-      <Sidebar startingWidth={sidebar_width} />
+      <Sidebar startingWidth={sidebar_width} preloadedUser={preloaded} />
       <div className="grid grid-app-layout flex-1 overflow-hidden relative">
-        <Header />
+        <Header preloadedUser={preloaded} />
         {children}
         {/* <Peek /> */}
       </div>
@@ -25,6 +25,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <AgentPanel startingWidth={agent_panel_width} />
         <HotkeysProvider />
       </Suspense>
+      {/* <SidebarProvider sidebar_hidden={sidebar_hidden} /> */}
     </>
   );
 }
