@@ -1,13 +1,15 @@
 import Link from 'next/link';
 import { User } from './user';
+import { api } from '@/convex/_generated/api';
+import { Preloaded } from 'convex/react';
 
 // Mobile and desktop sidebar content.
 // Kept as a client component so it can render inside the mobile Sheet.
-export const SidebarContent = () => {
+export const SidebarContent = ({ preloadedUser }: { preloadedUser: Preloaded<typeof api.users.getUser> }) => {
   console.log('SidebarContent -server');
   return (
     <>
-      <User />
+      <User preloadedUser={preloadedUser} />
       <button>Search</button>
       <Link href="/">Home</Link>
       ---

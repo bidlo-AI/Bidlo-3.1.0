@@ -15,9 +15,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return (
     <SidebarProvider sidebar_hidden={sidebar_hidden}>
-      <Sidebar startingWidth={sidebar_width} />
+      <Sidebar startingWidth={sidebar_width} preloadedUser={preloaded} />
       <div className="grid grid-app-layout flex-1 overflow-hidden relative">
-        <Header />
+        <Header preloadedUser={preloaded} />
         {children}
         {/* <Peek /> */}
       </div>

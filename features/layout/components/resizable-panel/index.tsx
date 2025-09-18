@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useLayoutEffect, useRef } from 'react';
+import { ResizeHandle } from './handle';
 
 interface ResizablePanelProps {
   children: React.ReactNode;
@@ -102,6 +103,16 @@ export function ResizablePanel({
         let w = side === 'left' ? startWidth - deltaX : startWidth + deltaX;
         w = Math.max(minWidth, Math.min(maxWidth, w));
         pendingWidth = w;
+        // Schedule debounced width-change notification outside rAF to reduce timer churn.
+        if (onWidthChange) {
+          if (debounceIdRef.current !== null) {
+            window.clearTimeout(debounceIdRef.current);
+          }
+          debounceIdRef.current = window.setTimeout(() => {
+            debounceIdRef.current = null;
+            onWidthChange(pendingWidth);
+          }, debounceMs);
+        }
         if (!frameRequested) {
           frameRequested = true;
           rafIdRef.current = window.requestAnimationFrame(() => {
@@ -112,16 +123,6 @@ export function ResizablePanel({
                 panelRef.current.style.width = `${pendingWidth}px`; // ⚡ batched via rAF
                 lastAppliedWidthRef.current = pendingWidth;
               }
-            }
-            // Debounce notify during drag to avoid spamming listeners.
-            if (onWidthChange) {
-              if (debounceIdRef.current !== null) {
-                window.clearTimeout(debounceIdRef.current);
-              }
-              debounceIdRef.current = window.setTimeout(() => {
-                debounceIdRef.current = null;
-                onWidthChange(pendingWidth);
-              }, debounceMs);
             }
           });
         }
@@ -223,40 +224,19 @@ export function ResizablePanel({
   /* render                                                          */
   /* -------------------------------------------------------------- */
   // Build handle and panel nodes so we can easily swap order based on `side`.
-  const handle = (
-    <div
-      onPointerDown={startDrag}
-      onDoubleClick={resetWidth}
-      className="after:w-3 after:cursor-col-resize after:h-full bg-border z-10 focus-visible:ring-ring duration-50 transition-colors hover:bg-foreground/30 relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90 touch-none"
-    />
-  );
 
-  const panel = (
+  // Note: Avoid setting width via JSX. React re-renders would reapply it and
+  // inadvertently reset the imperative width set during drag. We set the
+  // initial width in useLayoutEffect and then update via rAF as the user drags.
+  return (
     <div
       ref={panelRef}
-      style={{ width: typeof startingWidth === 'number' ? startingWidth : defaultWidth }}
+      style={{ contain: 'layout paint style' }}
       className={`h-full flex overflow-hidden ${className}`}
     >
-      {side === 'left' ? handle : null}
+      {side === 'left' ? <ResizeHandle onPointerDown={startDrag} onDoubleClick={resetWidth} /> : null}
       <div className="flex flex-1 flex-col ">{children}</div>
-      {side === 'right' ? handle : null}
+      {side === 'right' ? <ResizeHandle onPointerDown={startDrag} onDoubleClick={resetWidth} /> : null}
     </div>
   );
-
-  return panel;
-  // return (
-  //   <>
-  //     {side === 'left' ? (
-  //       <>
-  //         {handle}
-  //         {panel}
-  //       </>
-  //     ) : (
-  //       <>
-  //         {panel}
-  //         {handle}
-  //       </>
-  //     )}
-  //   </>
-  // );
 }

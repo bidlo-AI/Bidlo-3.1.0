@@ -7,8 +7,10 @@ import { ChevronsRight, Menu } from 'lucide-react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useSidebar } from '@/features/layout/components/sidebar/providers/SidebarProvider';
 import { Show } from '@legendapp/state/react';
+import { Preloaded } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
-export const SidebarActions = () => {
+export const SidebarActions = ({ preloadedUser }: { preloadedUser: Preloaded<typeof api.users.getUser> }) => {
   const sidebar$ = useSidebar();
 
   return (
@@ -28,7 +30,7 @@ export const SidebarActions = () => {
                 <SheetTitle>Mobile Sidebar</SheetTitle>
               </SheetHeader>
             </VisuallyHidden>
-            <SidebarContent />
+            <SidebarContent preloadedUser={preloadedUser} />
           </SheetContent>
         </Sheet>
       </div>
