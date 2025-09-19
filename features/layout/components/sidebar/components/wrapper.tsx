@@ -82,7 +82,10 @@ export const SidebarWrapper = ({ startingWidth, children }: { startingWidth?: nu
               maxWidth={400}
               defaultWidth={200}
               startingWidth={startingWidth}
-              className={cn('bg-muted relative', isHidden ? 'shadow-peek rounded-r-2xl border-y h-full' : 'h-screen ')}
+              className={cn(
+                'bg-muted relative group/sidebar',
+                isHidden ? 'shadow-peek rounded-r-2xl border-y h-full' : 'h-screen ',
+              )}
               storageKey={'sidebarWidthPx'}
               onWidthChange={(w) => sidebar$.setPanelWidth(w)}
               onWidthChangeEnd={handleWdithChange}

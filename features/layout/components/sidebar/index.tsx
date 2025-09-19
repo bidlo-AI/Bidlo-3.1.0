@@ -14,7 +14,6 @@ export const Sidebar = async ({
     <div className="hidden md:flex">
       <SidebarWrapper startingWidth={startingWidth}>
         <SidebarContent preloadedUser={preloadedUser} />
-        <div>test</div>
       </SidebarWrapper>
     </div>
   );
