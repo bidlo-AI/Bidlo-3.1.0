@@ -5,19 +5,7 @@ import { useObservable } from '@legendapp/state/react';
 import { api } from '@/convex/_generated/api';
 import { Observable } from '@legendapp/state';
 import { useMutation } from 'convex/react';
-
-interface SidebarState {
-  sidebar_hidden: boolean;
-  setSidebar: (hidden: boolean) => void;
-  toggleSidebar: () => void;
-  /** Ephemeral UI state: whether the overlay sidebar is expanded while hidden */
-  overlay_open: boolean;
-  openOverlay: () => void;
-  closeOverlay: () => void;
-  /** Current sidebar panel width in px (client-only; persisted elsewhere) */
-  panel_width: number;
-  setPanelWidth: (width: number) => void;
-}
+import { SidebarState } from '../types';
 
 export const SidebarContext = createContext<Observable<SidebarState> | null>(null);
 
@@ -28,7 +16,7 @@ export const SidebarProvider = ({
   children: React.ReactNode;
   sidebar_hidden: boolean;
 }) => {
-  const toggleSidebar = useMutation(api.users.toggleSidebar);
+  const toggleSidebar = useMutation(api.users.setLayoutHidden);
   const initialPanelWidth = (() => {
     if (typeof window !== 'undefined') {
       const stored = window.localStorage.getItem('sidebarWidthPx');
@@ -47,7 +35,7 @@ export const SidebarProvider = ({
     },
     setSidebar: (hidden: boolean) => {
       state$.sidebar_hidden.set(hidden);
-      toggleSidebar({ hidden });
+      toggleSidebar({ target: 'sidebar_hidden', hidden });
     },
     openOverlay: () => {
       state$.overlay_open.set(true);

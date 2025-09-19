@@ -15,6 +15,9 @@ export const SidebarContent = ({ preloadedUser }: { preloadedUser: Preloaded<typ
       ---
       <div>
         <label>favorites</label>
+        <Link href="/block_1">Block 1</Link>
+        <Link href="/block_2">Block 2</Link>
+        <Link href="/block_3">Block 3</Link>
       </div>
       ---
       <div>

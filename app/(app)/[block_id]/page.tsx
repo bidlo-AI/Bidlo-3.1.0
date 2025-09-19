@@ -1,9 +1,11 @@
 import { Favorites } from '@/features/blocks/components/header/favorites';
 import { Presence } from '@/features/blocks/components/header/presence';
+import { withAuth } from '@workos-inc/authkit-nextjs';
 import { More } from '@/features/blocks/components/header/more';
 
 export default async function BlockPage({ params }: { params: Promise<{ block_id: string }> }) {
   const { block_id } = await params;
+  await withAuth();
 
   const blockType = 'chat';
 

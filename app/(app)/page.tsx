@@ -1,4 +1,4 @@
-import { HistoryButton } from '@/features/agent/components/home/components/history-button';
+import { HistoryButton } from '@/features/agent/features/home/components/history-button';
 import Link from 'next/link';
 
 export default async function Home() {

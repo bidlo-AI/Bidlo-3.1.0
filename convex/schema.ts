@@ -23,9 +23,13 @@ export default defineSchema({
       v.literal('brown'),
       v.literal('default'),
     ),
-    agent_panel_width: v.optional(v.number()),
-    sidebar_width: v.optional(v.number()),
     sidebar_hidden: v.optional(v.boolean()),
+    sidebar_width: v.optional(v.number()),
+    agent_panel_hidden: v.optional(v.boolean()),
+    agent_panel_width: v.optional(v.number()),
+    agent_panel_page: v.optional(
+      v.union(v.literal('chat'), v.literal('memory'), v.literal('tasks'), v.literal('history'), v.literal('new')),
+    ),
   })
     .index('by_email', ['email'])
     .index('by_workos_id', ['workos_id']),

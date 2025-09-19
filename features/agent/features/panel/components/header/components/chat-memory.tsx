@@ -1,13 +1,13 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { BookOpen } from 'lucide-react';
-import { useAgentPanel } from '@/features/agent/hooks/useAgentPanel';
+import { useAgentPanel } from '@/features/agent/features/panel/providers/agentProvider';
 
 export const ChatMemoryButton = () => {
-  const { go } = useAgentPanel();
+  const agent$ = useAgentPanel();
 
   return (
-    <Button size="icon" variant="ghost" onMouseDown={() => go('memory')}>
+    <Button size="icon" variant="ghost" onMouseDown={() => agent$.setPage('memory')}>
       <BookOpen className="size-4" />
     </Button>
   );

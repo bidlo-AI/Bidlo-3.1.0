@@ -816,6 +816,7 @@
 .grid-app-layout .agent {
   grid-area: agent;
 }
+
 .grid-app-layout .content {
   grid-area: content;
 }

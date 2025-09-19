@@ -1,15 +1,16 @@
 'use client';
 
+import { Show } from '@legendapp/state/react';
 import { AgentPanelToggle } from './toggle-button';
-import { useAgentPanel } from '@/features/agent/hooks/useAgentPanel';
+import { useAgentPanel } from '@/features/agent/features/panel/providers/agentProvider';
 
 export const AgentActions = () => {
-  const { page } = useAgentPanel();
-  if (page) return null;
-
+  const agent$ = useAgentPanel();
   return (
-    <div className="agent flex items-center">
-      <AgentPanelToggle />
-    </div>
+    <Show if={agent$.hidden}>
+      <div className="agent flex items-center">
+        <AgentPanelToggle />
+      </div>
+    </Show>
   );
 };

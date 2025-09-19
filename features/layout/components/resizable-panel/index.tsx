@@ -2,6 +2,7 @@
 
 import { useCallback, useLayoutEffect, useRef } from 'react';
 import { ResizeHandle } from './handle';
+import { cn } from '@/lib/utils';
 
 interface ResizablePanelProps {
   children: React.ReactNode;
@@ -223,19 +224,18 @@ export function ResizablePanel({
   /* -------------------------------------------------------------- */
   /* render                                                          */
   /* -------------------------------------------------------------- */
-  // Build handle and panel nodes so we can easily swap order based on `side`.
-
-  // Note: Avoid setting width via JSX. React re-renders would reapply it and
-  // inadvertently reset the imperative width set during drag. We set the
-  // initial width in useLayoutEffect and then update via rAF as the user drags.
   return (
     <div
       ref={panelRef}
-      style={{ contain: 'layout paint style' }}
-      className={`h-full flex overflow-hidden ${className}`}
+      style={{ width: typeof startingWidth === 'number' ? startingWidth : defaultWidth }}
+      className={cn(
+        'overflow-hidden grid size-full',
+        side === 'left' ? 'grid-cols-[auto_1fr]' : 'grid-cols-[1fr_auto]',
+        className,
+      )}
     >
       {side === 'left' ? <ResizeHandle onPointerDown={startDrag} onDoubleClick={resetWidth} /> : null}
-      <div className="flex flex-1 flex-col ">{children}</div>
+      <div className="overflow-hidden">{children}</div>
       {side === 'right' ? <ResizeHandle onPointerDown={startDrag} onDoubleClick={resetWidth} /> : null}
     </div>
   );

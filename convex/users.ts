@@ -21,6 +21,7 @@ export const getUser: ReturnType<typeof query> = query({
 // --------------------------------
 // MUTATIONS
 // --------------------------------
+//! SHOULD ALL THESE BE MOVED TO A UI ACTIONS FILE?
 export const setLayoutWidth = mutation({
   // updates either agent_panel_width or sidebar_width for the user (providing this server side prevents layout shift on page load)
   args: { target: v.union(v.literal('agent_panel_width'), v.literal('sidebar_width')), width: v.number() },
@@ -40,8 +41,8 @@ export const setLayoutWidth = mutation({
   },
 });
 
-export const toggleSidebar = mutation({
-  args: { hidden: v.boolean() },
+export const setLayoutHidden = mutation({
+  args: { target: v.union(v.literal('agent_panel_hidden'), v.literal('sidebar_hidden')), hidden: v.boolean() },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity?.subject) throw new Error('User not authenticated');
@@ -52,7 +53,24 @@ export const toggleSidebar = mutation({
       .filter((q) => q.eq(q.field('workos_id'), workos_user_id))
       .first();
     if (!userDoc) throw new Error('User not found');
-    await ctx.db.patch(userDoc._id, { sidebar_hidden: args.hidden } as Partial<typeof userDoc>);
+    await ctx.db.patch(userDoc._id, { [args.target]: args.hidden } as Partial<typeof userDoc>);
+    return { success: true };
+  },
+});
+
+export const setAgentPanelPage = mutation({
+  args: { page: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity?.subject) throw new Error('User not authenticated');
+    const workos_user_id = identity.subject;
+
+    const userDoc = await ctx.db
+      .query('users')
+      .filter((q) => q.eq(q.field('workos_id'), workos_user_id))
+      .first();
+    if (!userDoc) throw new Error('User not found');
+    await ctx.db.patch(userDoc._id, { agent_panel_page: args.page } as Partial<typeof userDoc>);
     return { success: true };
   },
 });
