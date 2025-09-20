@@ -21,7 +21,6 @@ export const getUser: ReturnType<typeof query> = query({
 // --------------------------------
 // MUTATIONS
 // --------------------------------
-//! SHOULD ALL THESE BE MOVED TO A UI ACTIONS FILE?
 export const setLayoutWidth = mutation({
   // updates either agent_panel_width or sidebar_width for the user (providing this server side prevents layout shift on page load)
   args: { target: v.union(v.literal('agent_panel_width'), v.literal('sidebar_width')), width: v.number() },

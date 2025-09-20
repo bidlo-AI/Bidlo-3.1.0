@@ -11,18 +11,18 @@ export const UserMenu = ({ preloadedUser }: { preloadedUser: Preloaded<typeof ap
   const user = usePreloadedQuery(preloadedUser);
   return (
     <Popover>
-      <PopoverTrigger className="flex items-center gap-2 w-full cursor-pointer">
+      <PopoverTrigger className="flex items-center gap-2 w-full min-w-0 cursor-pointer">
         <Image
           src={user?.profile_picture}
-          className="rounded object-cover overflow-hidden bg-hover size-5"
+          className="rounded object-cover overflow-hidden bg-hover size-5 shrink-0"
           alt={user?.first_name}
           width={20}
           height={20}
         />
-        <span className="truncate font-semibold">
+        <span className="truncate font-semibold flex-1 min-w-0 text-left">
           {user?.first_name} {user?.last_name}
         </span>
-        <ChevronDown className="size-5 text-muted-foreground" />
+        <ChevronDown className="size-5 text-muted-foreground shrink-0" />
       </PopoverTrigger>
       <PopoverContent align="start" side="bottom" sideOffset={-16} className="p-3 flex flex-col gap-3">
         <div className="flex items-center gap-2.5">

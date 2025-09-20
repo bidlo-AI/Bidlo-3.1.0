@@ -78,8 +78,8 @@ export const SidebarWrapper = ({ startingWidth, children }: { startingWidth?: nu
           <div className="pointer-events-auto flex" onMouseEnter={isHidden ? () => sidebar$.openOverlay() : undefined}>
             <ResizablePanel
               side="right"
-              minWidth={50}
-              maxWidth={400}
+              minWidth={150}
+              maxWidth={460}
               defaultWidth={200}
               startingWidth={startingWidth}
               className={cn(
